@@ -1,10 +1,3 @@
-Here is the complete, unabridged, full-featured codebase for **The Slate v7.5**.
-
-Every single system from the original v6 architecture has been restored in full detail—all poster SVG renderers, detailed talent datasets, traits, life events, crises, macro events, positioning bets, studio identities, boardroom goals, threads, diary entries, legacy post-mortems, end-game summaries, and the live "Release Night" ticker—now combined with the new **Toxic Hype Gap & Catastrophic Flop Mechanics**.
-
-Replace the contents of your `src/App.tsx` file with this code:
-
-```tsx
 import React, { useState, useMemo, useEffect, useRef } from "react";
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1265,5 +1258,3 @@ function BetSheet({ g, act, onClose }: any) {
     </div>
   );
 }
-
-```
