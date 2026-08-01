@@ -1,21 +1,32 @@
+Here is the complete, unabridged, full-featured codebase for **The Slate v7.5**.
+
+Every single system from the original v6 architecture has been restored in full detail—all poster SVG renderers, detailed talent datasets, traits, life events, crises, macro events, positioning bets, studio identities, boardroom goals, threads, diary entries, legacy post-mortems, end-game summaries, and the live "Release Night" ticker—now combined with the new **Toxic Hype Gap & Catastrophic Flop Mechanics**.
+
+Replace the contents of your `src/App.tsx` file with this code:
+
+```tsx
 import React, { useState, useMemo, useEffect, useRef } from "react";
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   THE SLATE v7.5 — FULL ULTIMATE EDITION
+   THE SLATE v7.5 — FULL UNABRIDGED ENGINE
    ---------------------------------------------------------------------------
-   • Full original UI, SVG poster engine, and "Release Night" live ticker
-   • Boardroom targets, horizon threads, era transitions, & position bets
-   • Expanded talent rosters with career drift, traits, and life events
-   • NEW: Brutal Flop Engine, Toxic Hype Gap (week-2 collapse), & dynamic market volatility
+   1. FINITE MARKET & CAPACITY CEILING. Audience spends a fixed pool split by weight.
+   2. WEAK QUARTERS STAY WEAK. If nothing good opens, the pool does not fully pay out.
+   3. DISTRIBUTOR SPLIT. You keep 45% of theatrical gross.
+   4. TIME & SLOTS ARE SCARCE. 60 quarters, finite studio backlot slots.
+   5. RIVALS COMPOUND & POACH. Rivals adapt doctrine, poach talent, build franchises.
+   6. TOXIC HYPE GAP & CATASTROPHIC FLOPS (NEW v7.5). High marketing on low-quality
+      films causes severe word-of-mouth collapse, resulting in "Disastrous Bombs".
    ═══════════════════════════════════════════════════════════════════════════ */
 
-const RUN_QUARTERS = 60;
+const RUN_QUARTERS = 60;              // 15 fiscal years, three eras of five
 const QNAMES = ["Q1", "Q2", "Q3", "Q4"];
 const QSEASON = ["Spring", "Summer", "Festival", "Winter"];
-const BASE_POOL = 9_000_000_000;
-const GROSS_UNIT = 1_180_000_000;
-const POOL_GROWTH = 1.011;
-const RENTAL_SHARE = 0.45;
+
+const BASE_POOL = 9_000_000_000;      // ₹900Cr of theatre capacity per quarter
+const GROSS_UNIT = 1_180_000_000;     // Benchmark gross unit
+const POOL_GROWTH = 1.011;            // Real quarterly capacity growth
+const RENTAL_SHARE = 0.45;            // Studio's cut of theatrical gross
 
 /* ═══════════════════════════════════════════════════ ERAS ═════════════════ */
 const ERAS = [
@@ -24,7 +35,7 @@ const ERAS = [
     w: { q: 0.22, d: 0.38, a: 0.22, b: 0.10, h: 0.08 },
     pool: 1.00, season: [0.80, 1.26, 1.30, 0.90], screen: 0.75,
     anc: 0.55, presale: 0.22, mktRef: 160_000_000,
-    brief: "Territory distributors, single-screen halls, and a star system that decides everything. The film matters less than who is in it.",
+    brief: "Territory distributors, single-screen halls, and a star system that decides everything. The film matters less than who is in it. Festival weekends are the whole year.",
     shift: null,
   },
   {
@@ -32,7 +43,7 @@ const ERAS = [
     w: { q: 0.36, d: 0.24, a: 0.24, b: 0.09, h: 0.07 },
     pool: 1.52, season: [0.92, 1.16, 1.14, 0.98], screen: 1.15,
     anc: 1.00, presale: 0.34, mktRef: 300_000_000,
-    brief: "Ticket prices double and urban screens multiply. Audiences review films instantly—overhyped bad films drop 80% by Sunday.",
+    brief: "Ticket prices double and urban screens multiply. Audiences review films instantly — overhyped bad films drop 80% by Sunday.",
     shift: ["Capacity rises by half", "Quality overtakes star power", "Wide releases dominate", "Marketing costs inflate"],
   },
   {
@@ -40,8 +51,8 @@ const ERAS = [
     w: { q: 0.38, d: 0.18, a: 0.20, b: 0.10, h: 0.14 },
     pool: 1.14, season: [0.96, 1.10, 1.10, 1.00], screen: 1.30,
     anc: 2.35, presale: 0.62, mktRef: 420_000_000,
-    brief: "Rights are worth four times what they were, but theatrical audiences have zero patience for mediocrity.",
-    shift: ["Theatrical capacity contracts", "Rights are worth 2.3× more", "Buyers advance 62% up front", "Reputation matters more"],
+    brief: "Buyers with foreign money pay more for rights than the box office will. Theatrical capacity contracts, but rights are worth 2.3× more.",
+    shift: ["Theatrical capacity contracts", "Rights are worth 2.3× more", "Buyers advance 62% up front", "Reputation matters more than stars"],
   },
 ];
 
@@ -58,7 +69,7 @@ export function boardGoalFor(g: any, eraIdx: number) {
     "genre-horror": { kind: "hits", n: Math.round(3 + eraIdx), label: `Deliver ${Math.round(3 + eraIdx)} profitable films`, why: "The board wants a reliable hit machine." },
     "prestige": { kind: "awards", n: 1 + (eraIdx >= 2 ? 1 : 0), label: `Win ${1 + (eraIdx >= 2 ? 1 : 0)} Best Picture${eraIdx >= 2 ? "s" : ""}`, why: "The board is chasing respectability." },
     "franchise": { kind: "franchise", n: 2 + eraIdx, label: `Build a franchise to ${2 + eraIdx} films`, why: "The board wants a tentpole engine." },
-    "family": { kind: "blockbuster", n: 1 + (eraIdx >= 1 ? 1 : 0), label: `Land ${1 + (eraIdx >= 1 ? 1 : 0)} blockbuster${eraIdx >= 1 ? "s" : ""}`, why: "The board wants a crowd-pleaser." },
+    "family": { kind: "blockbuster", n: 1 + (eraIdx >= 1 ? 1 : 0), label: `Land ${1 + (eraIdx >= 1 ? 1 : 0)} blockbuster${eraIdx >= 1 ? "s" : ""}`, why: "The board wants a crowd-pleaser that travels." },
     "lowbudget": { kind: "profit", n: Math.round(2_000_000_000 * tier), label: `Bank ${fmt(Math.round(2_000_000_000 * tier))} in profit`, why: "The board wants efficiency proven." },
     "streaming": { kind: "value", n: null, label: `Outgrow a named rival's valuation`, why: "The board wants you bigger than the old guard." },
   };
@@ -88,23 +99,23 @@ export function judgeBoard(g: any) {
   if (p.done) {
     const bonus = Math.round(valuation(g) * 0.05);
     g.cash += bonus; g.momentum = clamp(g.momentum + 6, g.perks?.momFloor || 0, 100); g.boardPatience = 2;
-    headline(g, { icon: "✅", cat: "deal", weight: 2, you: true, text: `The board is delighted — target met. A ${fmt(bonus)} bonus awarded.` });
+    headline(g, { icon: "✅", cat: "deal", weight: 2, you: true, text: `The board is delighted — target met. A ${fmt(bonus)} bonus, and room to be bold.` });
     g.boardHistory.push({ era: gl.era, met: true });
     return { met: true, bonus };
   } else {
     g.boardPatience = (g.boardPatience ?? 2) - 1;
     if (g.boardPatience <= 0) {
       if (g.credit > 1) g.credit--;
-      headline(g, { icon: "⚠️", cat: "industry", weight: 3, you: true, text: `The board has lost patience — target missed again. Credit rating tightened.` });
+      headline(g, { icon: "⚠️", cat: "industry", weight: 3, you: true, text: `The board has lost patience — you missed target again. Credit tightened, and they're watching closely.` });
     } else {
-      headline(g, { icon: "😕", cat: "industry", weight: 2, you: true, text: `The board wanted more this era. Consequences loom on another miss.` });
+      headline(g, { icon: "😕", cat: "industry", weight: 2, you: true, text: `The board wanted more this era. One more miss and there will be consequences.` });
     }
     g.boardHistory.push({ era: gl.era, met: false });
     return { met: false };
   }
 }
 
-/* ═══════════════════════════════════════════════════ HORIZON ═══════════════ */
+/* ═══════════════════════════════════════════════════ THE HORIZON ═══════════ */
 export function horizonItems(g: any) {
   const out: any[] = [];
   if (g.goals) {
@@ -123,13 +134,14 @@ export function horizonItems(g: any) {
   });
   g.rivals.forEach((r: any) => r.slate.forEach((sf: any) => {
     if (sf.target > g.turn && sf.target <= g.turn + 4 && (sf.strength || 0) >= 55) {
-      out.push({ due: sf.target, kind: "rival", icon: "⚔️", col: r.col, title: `${r.name}: "${sf.title}"`, sub: `Rival release in ${labelOf(sf.target)}` });
+      out.push({ due: sf.target, kind: "rival", icon: "⚔️", col: r.col, title: `${r.name}: "${sf.title}"`, sub: `A big rival release in ${labelOf(sf.target)}` });
     }
   }));
   const nextAwardsTurn = g.turn + ((3 - qOf(g.turn) + 4) % 4 || 4);
   if (qOf(g.turn) !== 3) out.push({ due: nextAwardsTurn, kind: "awards", icon: "🏆", col: T.purple, title: "Awards season", sub: labelOf(nextAwardsTurn) });
   return out.filter(x => x.due >= g.turn).sort((a, b) => a.due - b.due);
 }
+
 export const untilLabel = (g: any, due: number) => { const d = due - g.turn; return d <= 0 ? "now" : d === 1 ? "next quarter" : `${d} qtrs`; };
 
 export function eraWarning(g: any) {
@@ -150,6 +162,7 @@ export function momMult(g: any) {
     raw: m,
   };
 }
+
 export const momBand = (m: number) =>
   m >= 82 ? { label: "White Hot", col: "#ff6b35" } :
   m >= 66 ? { label: "On a Roll", col: "#ff9f0a" } :
@@ -168,6 +181,7 @@ export function momentumDelta(g: any, ratio: number, critic: number) {
   return d;
 }
 
+/* ── THEME COLORS ────────────────────────────────────────────────────────── */
 const T = {
   bg: "#0a0a0c", surface: "#151518", surface2: "#1e1e22", surface3: "#2a2a2f",
   border: "rgba(255,255,255,0.08)", border2: "rgba(255,255,255,0.14)",
@@ -287,7 +301,7 @@ const WRITERS = [
 const POOLS: Record<string, any[]> = { director: DIRECTORS, star: STARS, writer: WRITERS };
 const ROLE_LABEL: Record<string, string> = { director: "Director", star: "Star", writer: "Writer" };
 
-/* ═══════════════════════════════════════════════════ BUDGETS ══════════════ */
+/* ═══════════════════════════════════════════════════ BUDGETS & FACILITIES ══ */
 const BUDGETS = [
   { id: "indie", label: "Indie", icon: "🎞️", amt: 100_000_000, qFloor: 32, screens: 0.42, dev: 1, prod: 1, post: 1 },
   { id: "mid", label: "Mid-Budget", icon: "🎬", amt: 450_000_000, qFloor: 48, screens: 1.00, dev: 1, prod: 2, post: 1 },
@@ -349,24 +363,58 @@ const CRISES = [
       { label: "Wait it out", cost: 0.03, q: 0, delay: 1, note: "Lose a quarter, keep the look" },
     ],
   },
+  {
+    id: "leak", icon: "📱", phase: "post", title: "The plot has leaked",
+    body: (t: string) => `A crew member posted the full synopsis of "${t}". It is everywhere.`,
+    opts: [
+      { label: "Lean in — release a real trailer", cost: 0.05, q: 0, buzz: +16, delay: 0, note: "Turn it into a launch" },
+      { label: "Legal takedowns", cost: 0.03, q: 0, buzz: -6, delay: 0, note: "Streisand risk" },
+      { label: "Say nothing", cost: 0, q: 0, buzz: +4, delay: 0, note: "Free, mild noise" },
+    ],
+  },
+  {
+    id: "auteur", icon: "🎨", phase: "prod", title: "The director wants more",
+    body: (t: string) => `Your director says "${t}" needs three more weeks and a second unit to be the film they pitched.`,
+    opts: [
+      { label: "Give them the film", cost: 0.13, q: +11, delay: 0, note: "13% over. Might be worth it." },
+      { label: "Hold the schedule", cost: 0, q: -4, delay: 0, note: "They'll remember this" },
+    ],
+  },
+  {
+    id: "censor", icon: "✂️", phase: "post", title: "The board wants cuts",
+    body: (t: string) => `The certification board has flagged eleven minutes of "${t}".`,
+    opts: [
+      { label: "Cut it", cost: 0, q: -7, delay: 0, note: "Clean certificate, weaker film" },
+      { label: "Appeal", cost: 0.04, q: -1, delay: 1, buzz: +10, note: "A quarter lost, free publicity" },
+    ],
+  },
+  {
+    id: "budget", icon: "💸", phase: "prod", title: "You are over budget",
+    body: (t: string) => `"${t}" is running 20% hot and production hasn't wrapped.`,
+    opts: [
+      { label: "Cover the overage", cost: 0.20, q: 0, delay: 0, note: "Just pay it" },
+      { label: "Cut the schedule down", cost: 0.06, q: -8, delay: 0, note: "Finish cheap and rough" },
+      { label: "Shut it down", cost: 0, q: 0, delay: 0, kill: true, note: "Write off everything spent" },
+    ],
+  },
 ];
 
 /* ═══════════════════════════════════════════════════ POSITION BETS ═════════ */
 const BETS: Record<string, any[]> = {
   single: [
     { id: "territory", icon: "🗺️", t: "Buy your own territory rights", cost: 700_000_000, body: "Stop paying a distributor to release your films in the west.", eff: { negCost: -0.07 }, note: "7% off every negative cost, permanently" },
-    { id: "music", icon: "🎵", t: "Start a music label", cost: 550_000_000, body: "Own the soundtracks. The songs sell the film.", eff: { anc: 0.30 }, note: "+30% on all ancillary rights" },
+    { id: "music", icon: "🎵", t: "Start a music label", cost: 550_000_000, body: "Own the soundtracks. In this business the songs sell the film — and later they sell themselves.", eff: { anc: 0.30 }, note: "+30% on all ancillary rights" },
     { id: "stable", icon: "🎭", t: "Sign a stable of young talent", cost: 900_000_000, body: "Lock four unknowns to long deals at today's prices.", eff: { youth: true }, note: "Three cheap contracts, 12 quarters each" },
   ],
   multiplex: [
-    { id: "screens", icon: "🏙️", t: "Take equity in a multiplex chain", cost: 2_200_000_000, body: "Own a piece of the screens your films play on.", eff: { screenEdge: 0.16 }, note: "Your films behave as a 16% wider release" },
-    { id: "vfx", icon: "💻", t: "Build a post house", cost: 1_600_000_000, body: "Bring finishing in-house before big films get pricier.", eff: { negCost: -0.11, postSpeed: true }, note: "11% off negative costs, post takes 1q less" },
-    { id: "credit", icon: "🏦", t: "Corporatise and list", cost: 1_000_000_000, body: "Institutional money and cheaper cost of capital.", eff: { credit: true }, note: "Borrow at half rate, with a wider limit" },
+    { id: "screens", icon: "🏙️", t: "Take equity in a multiplex chain", cost: 2_200_000_000, body: "Own a piece of the screens your films play on. You get the good weekends first.", eff: { screenEdge: 0.16 }, note: "Your films behave as a 16% wider release" },
+    { id: "vfx", icon: "💻", t: "Build a post house", cost: 1_600_000_000, body: "Bring finishing in-house before the big films get more expensive to finish.", eff: { negCost: -0.11, postSpeed: true }, note: "11% off negative costs, post takes a quarter less" },
+    { id: "credit", icon: "🏦", t: "Corporatise and list", cost: 1_000_000_000, body: "Institutional money, quarterly scrutiny, and a much cheaper cost of capital.", eff: { credit: true }, note: "Borrow at half rate, with a wider limit" },
   ],
   streaming: [
-    { id: "output", icon: "📺", t: "Sign a streaming output deal", cost: 1_200_000_000, body: "A platform takes everything you make, sight unseen.", eff: { presale: 0.22, ancFloor: true }, note: "+22% on every pre-sale" },
-    { id: "ip", icon: "🗄️", t: "Buy your library back", cost: 2_600_000_000, body: "Reacquire rights sold in lean years.", eff: { libraryMult: 0.55 }, note: "Library counts 55% higher toward valuation" },
-    { id: "brand", icon: "✨", t: "Make the studio the star", cost: 1_400_000_000, body: "Stop selling faces. Sell the studio logo.", eff: { momFloor: 48, appeal: 0.07 }, note: "Momentum never falls below 48" },
+    { id: "output", icon: "📺", t: "Sign a streaming output deal", cost: 1_200_000_000, body: "A platform takes everything you make, sight unseen, for four years.", eff: { presale: 0.22, ancFloor: true }, note: "+22% on every pre-sale, and a floor under bad films" },
+    { id: "ip", icon: "🗄️", t: "Buy your library back", cost: 2_600_000_000, body: "Reacquire the rights you sold in the lean years.", eff: { libraryMult: 0.55 }, note: "Library counts 55% higher toward valuation" },
+    { id: "brand", icon: "✨", t: "Make the studio the star", cost: 1_400_000_000, body: "Stop selling faces. Sell the fact that it is one of yours.", eff: { momFloor: 48, appeal: 0.07 }, note: "Momentum never falls below 48, and +7% appeal on everything" },
   ],
 };
 export const betsFor = (g: any) => BETS[eraAt(g).id];
@@ -380,10 +428,25 @@ export function takeBet(g: any, id: string) {
   ["negCost", "anc", "appeal", "presale", "screenEdge", "libraryMult"].forEach(k => { if (e[k]) g.perks[k] = (g.perks[k] || 0) + e[k]; });
   if (e.heatFloor) g.perks.momFloor = Math.max(g.perks.momFloor || 0, e.heatFloor);
   ["credit", "postSpeed", "ancFloor"].forEach(k => { if (e[k]) g.perks[k] = true; });
+  if (e.youth) {
+    [["star", "a8"], ["star", "a11"], ["director", "d5"]].forEach(([role, id]) => {
+      if (!contractFor(g, role, id)) g.roster.push({ role, id, per: Math.round(askFor(g, role, id) * 0.78), qLeft: 12, since: g.turn });
+    });
+  }
   g.betsTaken.push({ era: eraAt(g).id, id, name: b.t, turn: g.turn });
   push(g, b.icon, `${b.t} — ${fmt(b.cost)} committed`);
   return null;
 }
+
+const MACRO = [
+  { msg: "A cricket World Cup swallows two months of weekends", pool: -0.16, icon: "🏏" },
+  { msg: "Ticket prices are cut nationwide — footfall surges", pool: +0.14, icon: "🎟️" },
+  { msg: "A multiplex chain collapses; 400 screens go dark", pool: -0.20, icon: "🏚️" },
+  { msg: "Streaming fatigue sends audiences back to theatres", pool: +0.17, icon: "🍿" },
+  { msg: "A long festival calendar opens up the release map", pool: +0.11, icon: "🪔" },
+  { msg: "An exhibitor strike shortens the quarter", pool: -0.13, icon: "✊" },
+  { msg: "Piracy rings crack the opening-weekend window", pool: -0.09, icon: "📉" },
+];
 
 /* ═══════════════════════════════════════════════════ STUDIO IDENTITIES ═════ */
 const IDENTITIES = [
@@ -412,12 +475,28 @@ const IDENTITIES = [
     cost: "Weaker with intimate, character-led films.",
   },
   {
+    id: "family", n: "Family Entertainment", tag: "Four-quadrant crowd-pleasers", icon: "🎈", col: "#30d158",
+    favG: ["Family", "Comedy", "Romance"], weakG: ["Horror", "Crime"],
+    mods: { favAppeal: 1.10, favLegs: 1.16, weakAppeal: 0.80, momSteady: true },
+    desc: "Broad, warm, and durable. Your hits have legs for quarters, but you can't touch the dark stuff.",
+    edge: "Family/comedy/romance open wide and hold for longer; steadier momentum.",
+    cost: "Horror and crime actively hurt your brand.",
+  },
+  {
     id: "lowbudget", n: "Lean Studio", tag: "Low-budget hitmaker", icon: "🎞️", col: "#40c8e0",
     favG: [], weakG: [],
     mods: { negCost: 0.74, indieAppeal: 1.42, tentpoleCost: 1.18, mktEfficiency: 1.35, ancMult: 1.12 },
     desc: "You make ten small films while others make one big one. Nimble, efficient, allergic to spectacle.",
     edge: "Everything costs 20% less; small films punch above their weight; marketing goes further.",
     cost: "Tentpoles and event films are expensive and awkward for you.",
+  },
+  {
+    id: "streaming", n: "Streaming-First", tag: "Built for the platforms", icon: "📡", col: "#5e5ce6",
+    favG: [], weakG: [],
+    mods: { presaleBonus: 0.30, ancMult: 1.85, theatricalPenalty: 0.94, futureProof: true, presaleAllEras: true },
+    desc: "You saw where it was going. Weak in theatres, unbeatable once buyers arrive.",
+    edge: "Huge pre-sales and ancillary; you thrive as eras turn toward streaming.",
+    cost: "Your theatrical openings run soft.",
   },
 ];
 export const IDENT_LIST = IDENTITIES;
@@ -438,14 +517,16 @@ export function newGame(seed = Date.now(), brutal = false, identity = "genre-hor
     rivals: RIVAL_SEED.map(r => ({ ...r, slate: [], hits: 0, flops: 0, distress: 0 })),
     log: [], crisis: null, window: null, report: null, valHistory: [], redQuarters: 0,
   };
+  g.drift = {};
   rotateMood(g);
-  for (let i = 0; i < 3; i++) rivalGreenlight(g, g.rivals[i], true);
+  for (let i = 0; i < 4; i++) rivalGreenlight(g, g.rivals[i], true);
   g.boardPatience = 2;
   g.goals = boardGoalFor(g, 0);
   push(g, "🎬", "You have two production slots, a rented office, and fifteen years.");
   return g;
 }
 
+export function diary(g: any, f: any, icon: string, text: string) { (f.diary = f.diary || []).push({ turn: g.turn, icon, text }); }
 function push(g: any, icon: string, msg: string) { g.log.unshift({ icon, msg, t: g.turn }); if (g.log.length > 60) g.log.length = 60; }
 export function headline(g: any, { icon, text, cat, weight = 1, you = false }: any) {
   g.news = g.news || [];
@@ -479,6 +560,32 @@ export function statsOf(g: any, role: string, id: string) {
     craft: clamp(Math.round(b.craft + d.craft), 5, 99),
     trend: d.draw >= 4 ? "rising" : d.draw <= -4 ? "fading" : null,
   };
+}
+
+function ageTalent(g: any) {
+  g.drift = g.drift || {};
+  [["director", DIRECTORS], ["star", STARS], ["writer", WRITERS]].forEach(([role, pool]) => {
+    pool.forEach((b: any) => {
+      const d = g.drift[b.id] = g.drift[b.id] || { draw: 0, craft: 0, years: 0 };
+      d.years++;
+      const age = b.age + d.years;
+      if (role === "star") { d.draw += age < 33 ? 2.4 : age < 42 ? 0.2 : -3.2; d.craft += age < 52 ? 1.1 : -0.4; }
+      else if (role === "director") { d.craft += age < 56 ? 0.9 : -1.0; d.draw += age < 48 ? 0.8 : -1.4; }
+      else { d.craft += age < 60 ? 0.6 : -1.2; d.draw -= 0.4; }
+    });
+  });
+}
+
+function creditTalent(g: any, f: any, ratio: number, critic: number) {
+  g.drift = g.drift || {};
+  g.discoveries = g.discoveries || {};
+  const bump = ratio >= 2 ? 7 : ratio >= 1.25 ? 3.5 : ratio >= 0.85 ? 0 : -5;
+  const craftBump = critic >= 80 ? 2.5 : critic >= 65 ? 1 : critic < 45 ? -2 : 0;
+  [...f.cast.map((id: string) => ["star", id]), ["director", f.director], ["writer", f.writer]].forEach(([role, id]) => {
+    const d = g.drift[id] = g.drift[id] || { draw: 0, craft: 0, years: 0 };
+    d.draw += role === "writer" ? bump * 0.3 : bump;
+    d.craft += craftBump * (role === "star" ? 0.6 : 1);
+  });
 }
 
 export const salaryIndex = (g: any) => Math.pow(1.009, g.turn - 1);
@@ -525,7 +632,9 @@ export function availability(g: any, role: string, id: string) {
 export const quarterlyPayroll = (g: any) => sum(g.roster.map((r: any) => r.per));
 export const quarterlyBurn = (g: any) => quarterlyPayroll(g) + FACILITIES[g.facility].upkeep + debtService(g);
 
-export const rateFor = (g: any) => [0, 0.115, 0.075, 0.048][g.credit] * (g.perks?.credit ? 0.5 : 1);
+export const CREDIT_LABEL = ["Cut off", "Distressed", "Watchlist", "Prime"];
+export const CREDIT_RATE = [0, 0.115, 0.075, 0.048];
+export const rateFor = (g: any) => CREDIT_RATE[g.credit] * (g.perks?.credit ? 0.5 : 1);
 export const maxBorrow = (g: any) => g.credit === 0 ? 0 : Math.round(valuation(g) * [0, 0.10, 0.22, 0.38][g.credit] - g.debt);
 export function debtService(g: any) {
   if (g.debt <= 0) return 0;
@@ -692,7 +801,7 @@ function resolveWindow(g: any) {
   ];
 
   entries.forEach((e: any) => {
-    // Toxic Hype Gap Calculation: Big marketing on a bad film triggers brutal word-of-mouth penalty
+    // Toxic Hype Gap Engine: Big marketing + low quality triggers severe second-week collapse
     if (e.mine) {
       const mktAwa = awareness(g, e.f.mktSpend);
       const hypeGap = mktAwa - e.f.quality;
@@ -1156,3 +1265,5 @@ function BetSheet({ g, act, onClose }: any) {
     </div>
   );
 }
+
+```
